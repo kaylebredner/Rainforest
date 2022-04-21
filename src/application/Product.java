@@ -28,7 +28,7 @@ public class Product {
     Label lblName = new Label();
     Button btnPurchase = new Button("Purchase");
     HBox  pricePurchase = new HBox(10,lblPrice,btnPurchase);
-  ;
+    ;
 
     Product() throws FileNotFoundException {
         lblName.setText("ItemNotFound");
@@ -36,8 +36,11 @@ public class Product {
         mainBox.getChildren().add(lblName);
         mainBox.getChildren().add(pricePurchase);
         productImage.setImage(image);
-        //productImage.setScaleX(.25);
-       // productImage.setScaleY(.25);
-       //mainBox.setMaxWidth(150);
+        productImage.setFitHeight(125);
+        productImage.setFitWidth(125);
+
+    }
+    VBox getNode(){
+        return mainBox;
     }
 }

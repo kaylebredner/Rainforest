@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 import java.io.FileNotFoundException;
@@ -30,21 +31,16 @@ public class Main extends Application {
 
 	//Containers
 	HBox hbxMenu = new HBox(10,btnRainforest,btnCart,lblSearch,cbxCategory,txtSearch);
-	HBox[] hbxItemRow = new HBox[10];
-	Product product;
+	Product product[][] = new Product[3][3];
+	
 
-	{
-		try {
-			product = new Product();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	VBox vbxItems = new VBox(10,product.mainBox);
-
+	GridPane itemGrid = new GridPane();
+	VBox vbxItems = new VBox(10,hbxMenu);
+	HBox hbxItem = new HBox();
+	
 	public void start(Stage primaryStage) {
 		try {
+			BuildProducts();
 			cbxCategory.getItems().addAll("All Items","Electronics","Grocery");
 			cbxCategory.getSelectionModel().select(0);
 			BorderPane root = new BorderPane(vbxItems);
@@ -60,5 +56,22 @@ public class Main extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
+	}
+	public void BuildProducts() throws FileNotFoundException{
+		for(int i=0;i<3;i++) {
+			for(int j=0;j<3;j++) {
+				product[i][j]=new Product();
+				itemGrid.add(product[i][j].mainBox,j,i);
+				
+			}
+		}
+		vbxItems.getChildren().clear();
+		vbxItems.getChildren().add(hbxMenu);
+		vbxItems.getChildren().add(itemGrid);
+		
+		
+		
+		
+
 	}
 }

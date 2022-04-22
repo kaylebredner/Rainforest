@@ -1,7 +1,15 @@
 package application;
 	
 import javafx.application.Application;
+<<<<<<< Updated upstream
 import javafx.scene.image.ImageView;
+=======
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+>>>>>>> Stashed changes
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -17,6 +25,7 @@ import java.io.FileNotFoundException;
 
 
 public class Main extends Application {
+<<<<<<< Updated upstream
 	
 	//controls
 	Button btnRainforest = new Button("Rainforest");
@@ -27,6 +36,11 @@ public class Main extends Application {
 
 	//Item Containers
 
+=======
+	private BorderPane root = null;
+	private ProductPage productPage = null;
+	private CustomerPage customerPage = null;
+>>>>>>> Stashed changes
 
 
 	//Containers
@@ -40,12 +54,25 @@ public class Main extends Application {
 	
 	public void start(Stage primaryStage) {
 		try {
+<<<<<<< Updated upstream
 			BuildProducts();
 			cbxCategory.getItems().addAll("All Items","Electronics","Grocery");
 			cbxCategory.getSelectionModel().select(0);
 			BorderPane root = new BorderPane(vbxItems);
 			Scene scene = new Scene(root,1200,700);
+=======
+			productPage = new ProductPage();
+			root = new BorderPane(productPage.getNode());
+			Scene scene = new Scene(root,450,475);
+>>>>>>> Stashed changes
 			primaryStage.setTitle("Rainforest");
+			
+			customerPage = new CustomerPage();
+			
+			//Create Menu bars and attach them
+			initMenuBar();
+			
+			
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -54,6 +81,7 @@ public class Main extends Application {
 		}
 	}
 	
+<<<<<<< Updated upstream
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -75,3 +103,57 @@ public class Main extends Application {
 
 	}
 }
+=======
+	private void initMenuBar() {
+		Menu fileMenu = new Menu("File");
+		MenuItem exit = new MenuItem("Exit");
+		fileMenu.getItems().add(exit);
+		
+		Menu viewMenu = new Menu("View");
+		MenuItem productView = new MenuItem("Products");
+		MenuItem customerView = new MenuItem("Customers");
+		viewMenu.getItems().addAll(productView,customerView);
+		
+		MenuBar menuBar = new MenuBar();
+		menuBar.getMenus().add(fileMenu);
+		menuBar.getMenus().add(viewMenu);
+		
+		exit.setOnAction(new ExitHandler());
+		productView.setOnAction(new ProductPageViewHandler());
+		customerView.setOnAction(new CustomerPageViewHandler());
+		
+		//attach menu element to the scene
+		root.setTop(menuBar);
+	}
+
+	public static void main(String[] args) {
+		launch(args);
+	}
+	
+	
+
+
+	class ExitHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			System.exit(0);
+		}
+	}
+
+	//todo: when pressed swaps root to productPage
+	class ProductPageViewHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			root.setCenter(productPage.getNode());
+		}
+	}
+
+	//todo: when pressed swaps root to customerPage
+	class CustomerPageViewHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			root.setCenter(customerPage.getNode());
+		}
+	}
+}
+>>>>>>> Stashed changes

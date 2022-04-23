@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -11,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class ProductPage {
 	private VBox vbxMain = new VBox();
@@ -61,7 +63,13 @@ public class ProductPage {
 	class DetailsBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			ProductDetailsPage productDetails = new ProductDetailsPage();
+			VBox main = productDetails.getNode();
+			Scene productDetailsScene = new Scene(main,450,700);
+			Stage productDetailsStage = new Stage();
+			productDetailsStage.setTitle("Product Details");
+			productDetailsStage.setScene(productDetailsScene);
+			productDetailsStage.show();
 		}
 	}
 	

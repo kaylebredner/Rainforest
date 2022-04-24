@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import application.ProductPage.DetailsBtnHandler;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 //todo: see sketch on discord
 //pop up page for selected product from the list with relevant details from DB
@@ -60,7 +64,7 @@ public class ProductDetailsPage {
 		}
 		connection = DriverManager.getConnection(url,username,password);
 		System.out.println("connected");
-		mainVbox.getChildren().addAll(imageView,details);
+		mainVbox.getChildren().addAll(imageView,details,editBtn);
 		initDetails(productName);
 	}
 	
@@ -70,7 +74,7 @@ public class ProductDetailsPage {
 		result.next();
 		nameLbl.setText("Name: " + result.getString("ProductName"));
 		BigDecimal price = result.getBigDecimal("ProductPrice");
-		priceLbl.setText("Price: " + price);
+		priceLbl.setText("Price: $" + price);
 		BigDecimal weight = result.getBigDecimal("ProductWeight");
 		weightLbl.setText("Weight: " + weight + " lbs");
 		
@@ -98,11 +102,22 @@ public class ProductDetailsPage {
 		result.next();
 		categoryLbl.setText("Category: " + result.getString("categoryName"));
 		
+		editBtn.setOnAction(new EditBtnHandler());
+		
 		
 //		categoryLbl.setText("Category: "+result.getString("));
 	}
 	
 	public VBox getNode() {
 		return mainVbox;
+	}
+	
+	
+	
+	class EditBtnHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			
+		}
 	}
 }

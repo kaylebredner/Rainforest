@@ -108,7 +108,19 @@ public class ProductPage {
 	class AddBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			AddProductPage addProductPage = null;
+			try {
+				addProductPage = new AddProductPage();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			VBox main = addProductPage.getNode();
+			Scene addProductScene = new Scene(main,450,700);
+			Stage addProductStage = new Stage();
+			addProductStage.setTitle("Add Product");
+			addProductStage.setScene(addProductScene);
+			addProductStage.show();
 		}
 	}
 	
@@ -122,7 +134,9 @@ public class ProductPage {
 	class RefreshBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			int index = cbxCategory.getSelectionModel().getSelectedIndex();
+			cbxCategory.getSelectionModel().selectLast();
+			cbxCategory.getSelectionModel().select(index);
 		}
 	}
 	

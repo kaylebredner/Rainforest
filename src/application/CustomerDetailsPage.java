@@ -50,9 +50,9 @@ public class CustomerDetailsPage {
 		
 		String url = "jdbc:mysql://localhost/rainforest";
 		
-		String username = "root";
+		String username = "Rainforest";
 		
-		String password = "Krdeant1!";
+		String password = "Rainforest123!";
 		
 		try {
 			connection = DriverManager.getConnection(url,username,password);

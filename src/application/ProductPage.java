@@ -1,5 +1,11 @@
 package application;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,7 +25,8 @@ import javafx.stage.Stage;
 public class ProductPage {
 	private VBox vbxMain = new VBox();
 	//product list class is incomplete
-	
+	static Connection connection;
+	static Statement statement;
 	
 	private ListView<String> lstProducts = new ListView<String>();
 	private Button btnAdd = new Button("Add");
@@ -34,7 +41,7 @@ public class ProductPage {
 	private VBox vbxButtons = new VBox(20,btnAdd,btnRemove,btnDetails,btnRefresh);
 	private HBox hbxPrdctListAndBtns = new HBox(50,lstProducts,vbxButtons);
 	
-	public ProductPage(){
+	public ProductPage() throws SQLException{
 		vbxButtons.setAlignment(Pos.CENTER);
 		vbxMain.getChildren().add(hbxCatAndSearch);
 		vbxMain.getChildren().add(hbxPrdctListAndBtns);
@@ -42,15 +49,30 @@ public class ProductPage {
 //		hbxPrdctListAndBtns.setAlignment(Pos.CENTER);
 //		hbxCatAndSearch.setAlignment(Pos.CENTER);
 		cbxCategory.getSelectionModel().select(0);	
-		
+		propogateList();
 		initEventHandlers();
 		}
 	
 	public VBox getNode() {
 		return vbxMain;
 	}
-	public void propogateList() {
+	public void propogateList() throws SQLException{
+		String url = "jdbc:mysql://localhost/rainforest";
 		
+		String username = "Rainforest";
+		
+		String password = "Rainforest123!";
+		
+
+		connection = DriverManager.getConnection(url,username,password);
+		statement = connection.createStatement();
+		lstProducts.getItems().clear();
+		ResultSet result = statement.executeQuery("SELECT ProductName FROM Product_t;");
+		
+		while (result.next()) {
+			lstProducts.getItems().add(result.getString("ProductName"));
+		}
+		connection.close();
 	}
 	
 	private void initEventHandlers() {
@@ -65,7 +87,14 @@ public class ProductPage {
 	class DetailsBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			ProductDetailsPage productDetails = new ProductDetailsPage();
+			String strSelected  = lstProducts.getSelectionModel().getSelectedItem();
+			ProductDetailsPage productDetails = null;
+			try {
+				productDetails = new ProductDetailsPage(strSelected);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			VBox main = productDetails.getNode();
 			Scene productDetailsScene = new Scene(main,450,700);
 			Stage productDetailsStage = new Stage();

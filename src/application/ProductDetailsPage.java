@@ -2,6 +2,12 @@ package application;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -35,14 +41,34 @@ public class ProductDetailsPage {
 	private VBox mainVbox = new VBox();
 //	private Scene productDetailsScene = new Scene(mainVbox);
 	
-	public ProductDetailsPage() {
+	//SQL
+	Connection connection = null;
+	Statement statement;
+	
+	public ProductDetailsPage(String productName) throws SQLException {
+		String url = "jdbc:mysql://localhost/rainforest";
+		
+		String username = "Rainforest";
+		
+		String password = "Rainforest123!";
 		try {
 			imageView.setImage(new Image(new FileInputStream("default-product-image.png")));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		nameAndPrice.setSpacing(10);
+		connection = DriverManager.getConnection(url,username,password);
+		System.out.println("connected");
 		mainVbox.getChildren().addAll(imageView,nameAndPrice,weightAndAmount,catAndVendor,location);
+		initDetails(productName);
+	}
+	
+	private void initDetails(String productName) throws SQLException {
+		statement = connection.createStatement();
+		ResultSet result = statement.executeQuery("SELECT * From Product_t where ProductName = '"+productName+"';");
+		result.next();
+		nameLbl.setText("Name: " + result.getString("ProductName"));
+		BigDecimal price = result.getBigDecimal("ProductPrice");
+		priceLbl.setText("Price: " + price);
 	}
 	
 	public VBox getNode() {

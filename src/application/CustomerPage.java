@@ -44,6 +44,7 @@ public class CustomerPage {
 	private HBox hbxPrdctListAndBtns = new HBox(50,lstProducts,vbxButtons);
 	
 	public CustomerPage() throws SQLException{
+		openConnection();
 		propogateList();
 		vbxButtons.setAlignment(Pos.CENTER);
 		vbxMain.getChildren().add(hbxCatAndSearch);
@@ -59,6 +60,7 @@ public class CustomerPage {
 		return vbxMain;
 	}
 	public void propogateList() throws SQLException {
+
 		String url = "jdbc:mysql://localhost/rainforest";
 		
 		String username = "Rainforest";
@@ -72,20 +74,45 @@ public class CustomerPage {
 			e.printStackTrace();
 		}
 		statement = connection.createStatement();
+
+		openConnection();
+
 		clearList();
 		ResultSet result = statement.executeQuery("SELECT CustomerName FROM Customer_t;");
 		
 		while (result.next()) {
 			lstProducts.getItems().add(result.getString("CustomerName"));
 		}
-		connection.close();
+		closeConnection();
+		
 	}
 	public void clearList() {
 		if(!lstProducts.getItems().isEmpty()) {
 			lstProducts.getItems().clear();
 		}
 	}
-	
+	public String getSelected() {
+		String strSelected  = lstProducts.getSelectionModel().getSelectedItem();
+		return strSelected;
+	}
+	public void openConnection() throws SQLException {
+		String url = "jdbc:mysql://localhost/rainforest";
+		
+		String username = "Rainforest";
+		
+		String password = "Rainforest123!";
+		
+		try {
+			connection = DriverManager.getConnection(url,username,password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		statement = connection.createStatement();
+	}
+	public void closeConnection() throws SQLException {
+		connection.close();
+	}
 	private void initEventHandlers() {
 		btnDetails.setOnAction(new DetailsBtnHandler());
 		btnRemove.setOnAction(new RemoveBtnHandler());
@@ -96,10 +123,10 @@ public class CustomerPage {
 	class DetailsBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			String strSelected  = lstProducts.getSelectionModel().getSelectedItem();
+			
 			CustomerDetailsPage customer = null;
 			try {
-				customer = new CustomerDetailsPage(strSelected);
+				customer = new CustomerDetailsPage(getSelected());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -123,7 +150,30 @@ public class CustomerPage {
 	class RemoveBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			try {
+				openConnection();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				statement.executeQuery("delete from customer_t where customerName ="+getSelected());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				propogateList();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				closeConnection();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

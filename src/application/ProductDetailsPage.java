@@ -29,13 +29,15 @@ public class ProductDetailsPage {
 	private Label vendorLbl = new Label("Vendor: ");
 	private Label categoryLbl = new Label("Category: ");
 	private Label weightLbl = new Label("Weight: ");
-	private Label amountLbl = new Label("Amount: ");
-	private Label locationLbl = new Label("Location: ");
+	private Label quantityLbl = new Label("Quantity: ");
+	private Label positionLbl = new Label("Position: ");
 	
-	private HBox nameAndPrice = new HBox(nameLbl, priceLbl);
-	private HBox weightAndAmount = new HBox(weightLbl, amountLbl);
-	private HBox catAndVendor = new HBox(categoryLbl, vendorLbl);
-	private HBox location = new HBox(locationLbl);
+//	private HBox nameAndPrice = new HBox(nameLbl, priceLbl);
+//	private HBox weightAndAmount = new HBox(weightLbl, amountLbl);
+//	private HBox catAndVendor = new HBox(categoryLbl, vendorLbl);
+//	private HBox location = new HBox(locationLbl);
+	
+	private VBox details = new VBox(nameLbl,priceLbl,categoryLbl,vendorLbl,weightLbl,quantityLbl,positionLbl);
 	
 	//add all the hbox's to this
 	private VBox mainVbox = new VBox();
@@ -58,7 +60,7 @@ public class ProductDetailsPage {
 		}
 		connection = DriverManager.getConnection(url,username,password);
 		System.out.println("connected");
-		mainVbox.getChildren().addAll(imageView,nameAndPrice,weightAndAmount,catAndVendor,location);
+		mainVbox.getChildren().addAll(imageView,details);
 		initDetails(productName);
 	}
 	
@@ -69,6 +71,35 @@ public class ProductDetailsPage {
 		nameLbl.setText("Name: " + result.getString("ProductName"));
 		BigDecimal price = result.getBigDecimal("ProductPrice");
 		priceLbl.setText("Price: " + price);
+		BigDecimal weight = result.getBigDecimal("ProductWeight");
+		weightLbl.setText("Weight: " + weight + " lbs");
+		
+		//add position in select here once it's inserted into the DB
+		result = statement.executeQuery("select quantity\r\n" + 
+				"from inventory_t, product_t\r\n" + 
+				"where product_t.inventoryID = inventory_t.inventoryID\r\n" + 
+				"And product_t.productName like '%"+ productName +"';");
+		result.next();
+		//todo: pull position like normal and set the label once it's inserted
+		int quantity = result.getInt("quantity");
+		quantityLbl.setText("Quantity: " + quantity);
+		
+		result = statement.executeQuery("select vendorName\r\n" + 
+				"from vendor_t, product_t\r\n" + 
+				"where product_t.vendorID = vendor_t.vendorID\r\n" + 
+				"AND product_t.productName like '%" + productName+"';");
+		result.next();
+		vendorLbl.setText("Vendor: " + result.getString("vendorName"));
+		
+		result = statement.executeQuery("select categoryName\r\n" + 
+				"from category_t, product_t\r\n" + 
+				"where product_t.categoryID = category_T.categoryID\r\n" + 
+				"AND product_t.productName like '%"+productName+"';");
+		result.next();
+		categoryLbl.setText("Category: " + result.getString("categoryName"));
+		
+		
+//		categoryLbl.setText("Category: "+result.getString("));
 	}
 	
 	public VBox getNode() {

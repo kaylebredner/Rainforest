@@ -1,20 +1,19 @@
-DROP DATABASE rainforest;
+DROP DATABASE IF EXISTS rainforest;
 
 CREATE DATABASE rainforest;
 
 USE rainforest;
 
 CREATE TABLE customer_t
-(CustomerID integer NOT NULL,
+(CustomerID integer NOT NULL auto_increment,
 CustomerName VarChar(50) NOT NULL,
-CustomerAddress varchar(25) NOT NULL,
+CustomerAddress varchar(50) NOT NULL,
 CustomerPremium boolean NOT NULL, /*0 is false, anything else is true*/
 PRIMARY KEY(customerID)
 );
-ALTER TABLE customer_t auto_increment = 1;
 
 CREATE TABLE employee_t
-(EmployeeID integer NOT NULL,
+(EmployeeID integer NOT NULL AUTO_INCREMENT,
 EmployeeName varchar(50) NOT NULL,
 EmployeeAddress varchar(25) NOT NULL,
 EmployeeStartDate date NOT NULL,
@@ -24,7 +23,7 @@ PRIMARY KEY(EmployeeID)
 ALTER TABLE employee_t auto_increment = 1;
 
 CREATE TABLE vendor_t
-(VendorID integer NOT NULL,
+(VendorID integer NOT NULL AUTO_INCREMENT,
 VendorName varchar(50) NOT NULL,
 VendorAddress varchar(50) NOT NULL,
 PRIMARY KEY(VendorID)
@@ -32,19 +31,17 @@ PRIMARY KEY(VendorID)
 ALTER TABLE vendor_t auto_increment = 1;
 
 CREATE TABLE category_t
-(CategoryID integer NOT NULL,
+(CategoryID integer NOT NULL AUTO_INCREMENT,
 CategoryName varchar(50) NOT NULL,
-CategoryDescription text NOT NULL,
+CategoryDescription text,
 PRIMARY KEY(CategoryID)
 );
-ALTER TABLE category_t auto_increment = 1;
 
 CREATE TABLE inventory_t
-(InventoryID integer NOT NULL,
+(InventoryID integer NOT NULL AUTO_INCREMENT,
 Quantity integer NOT NULL,
 PRIMARY KEY(InventoryID)
 );
-ALTER TABLE inventory_t auto_increment = 1;
 
 CREATE TABLE payment_t
 (PaymentID integer NOT NULL,
@@ -59,7 +56,7 @@ FOREIGN KEY(CustomerID) REFERENCES customer_t(CustomerID)
 ALTER TABLE payment_t auto_increment = 1;
 
 CREATE TABLE order_t
-(OrderID integer NOT NULL,
+(OrderID integer NOT NULL AUTO_INCREMENT,
 CustomerID integer NOT NULL,
 EmployeeID integer NOT NULL,
 OrderStatus varchar(10) NOT NULL,
@@ -70,7 +67,6 @@ PRIMARY KEY(OrderID),
 FOREIGN KEY(CustomerID) REFERENCES customer_t(CustomerID),
 FOREIGN KEY(EmployeeID) REFERENCES employee_t(EmployeeID)
 );
-ALTER TABLE order_t auto_increment = 1;
 
 CREATE TABLE shipmentLocation_t
 (LocationID integer	NOT NULL,
@@ -87,15 +83,14 @@ FOREIGN KEY(OrderID) REFERENCES order_t(OrderID)
 ALTER TABLE shipmentLocation_t auto_increment = 1;
 
 CREATE TABLE product_t
-(ProductID integer NOT NULL,
+(ProductID integer NOT NULL AUTO_INCREMENT,
 VendorID integer NOT NULL,
 InventoryID integer NOT NULL,
-OrderID integer NOT NULL,
+OrderID integer,
 CategoryID integer NOT NULL,
-ProductName varchar(25) NOT NULL,
-ProductPrice decimal NOT NULL,
-ProductWeight decimal NOT NULL,
-ProductImage blob,
+ProductName varchar(75) NOT NULL,
+ProductPrice decimal(13,2) NOT NULL,
+ProductWeight decimal(13,2) NOT NULL,
 PRIMARY KEY(ProductID),
 FOREIGN KEY(VendorID) REFERENCES vendor_t(VendorID),
 FOREIGN KEY(InventoryID) REFERENCES inventory_t(InventoryID),

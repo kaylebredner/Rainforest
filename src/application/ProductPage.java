@@ -14,6 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+
+
 public class ProductPage {
 	private VBox vbxMain = new VBox();
 	//product list class is incomplete

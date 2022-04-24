@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -15,11 +16,19 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class CustomerPage {
 	private VBox vbxMain = new VBox();
 	//product list class is incomplete
-	
+	static Connection connection;
+	static Statement statement;
 	
 	private ListView<String> lstProducts = new ListView<String>();
 	private Button btnAdd = new Button("Add");
@@ -34,7 +43,8 @@ public class CustomerPage {
 	private VBox vbxButtons = new VBox(20,btnAdd,btnRemove,btnDetails,btnRefresh);
 	private HBox hbxPrdctListAndBtns = new HBox(50,lstProducts,vbxButtons);
 	
-	public CustomerPage(){
+	public CustomerPage() throws SQLException{
+		propogateList();
 		vbxButtons.setAlignment(Pos.CENTER);
 		vbxMain.getChildren().add(hbxCatAndSearch);
 		vbxMain.getChildren().add(hbxPrdctListAndBtns);
@@ -48,8 +58,32 @@ public class CustomerPage {
 	public VBox getNode() {
 		return vbxMain;
 	}
-	public void propogateList() {
+	public void propogateList() throws SQLException {
+	String url = "jdbc:mysql://localhost/rainforest";
 		
+		String username = "root";
+		
+		String password = "Krdeant1!";
+		
+		try {
+			connection = DriverManager.getConnection(url,username,password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		statement = connection.createStatement();
+		clearList();
+		ResultSet result = statement.executeQuery("SELECT CustomerName FROM Customer_t;");
+		
+		while (result.next()) {
+			lstProducts.getItems().add(result.getString("CustomerName"));
+		}
+		connection.close();
+	}
+	public void clearList() {
+		if(!lstProducts.getItems().isEmpty()) {
+			lstProducts.getItems().clear();
+		}
 	}
 	
 	private void initEventHandlers() {
@@ -62,7 +96,20 @@ public class CustomerPage {
 	class DetailsBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			String strSelected  = lstProducts.getSelectionModel().getSelectedItem();
+			CustomerDetailsPage customer = null;
+			try {
+				customer = new CustomerDetailsPage(strSelected);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			VBox main = customer.getNode();
+			Scene customerDetailsScene = new Scene(main,450,700);
+			Stage customerDetailsStage = new Stage();
+			customerDetailsStage.setTitle("Customer Details");
+			customerDetailsStage.setScene(customerDetailsScene);
+			customerDetailsStage.show();
 		}
 	}
 	
@@ -83,7 +130,12 @@ public class CustomerPage {
 	class RefreshBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			try {
+				propogateList();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

@@ -45,18 +45,18 @@ public class ProductPage {
 		vbxButtons.setAlignment(Pos.CENTER);
 		vbxMain.getChildren().add(hbxCatAndSearch);
 		vbxMain.getChildren().add(hbxPrdctListAndBtns);
-		cbxCategory.getItems().add("All Departments");
+		cbxCategory.getItems().addAll("All Categories","Electronics","Home and Office");
 //		hbxPrdctListAndBtns.setAlignment(Pos.CENTER);
 //		hbxCatAndSearch.setAlignment(Pos.CENTER);
 		cbxCategory.getSelectionModel().select(0);	
-		propogateList();
+		propogateList("");
 		initEventHandlers();
 		}
 	
 	public VBox getNode() {
 		return vbxMain;
 	}
-	public void propogateList() throws SQLException{
+	public void propogateList(String extraQuery) throws SQLException{
 		String url = "jdbc:mysql://localhost/rainforest";
 		
 		String username = "Rainforest";
@@ -67,7 +67,7 @@ public class ProductPage {
 		connection = DriverManager.getConnection(url,username,password);
 		statement = connection.createStatement();
 		lstProducts.getItems().clear();
-		ResultSet result = statement.executeQuery("SELECT ProductName FROM Product_t;");
+		ResultSet result = statement.executeQuery("SELECT ProductName FROM Product_t" + extraQuery+";");
 		
 		while (result.next()) {
 			lstProducts.getItems().add(result.getString("ProductName"));
@@ -80,6 +80,7 @@ public class ProductPage {
 		btnRemove.setOnAction(new RemoveBtnHandler());
 		btnRefresh.setOnAction(new RefreshBtnHandler());
 		btnAdd.setOnAction(new AddBtnHandler());
+		cbxCategory.setOnAction(new CbxSelectionHandler());
 	}
 	
 	
@@ -122,6 +123,27 @@ public class ProductPage {
 		@Override
 		public void handle(ActionEvent event) {
 			
+		}
+	}
+	
+	class CbxSelectionHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			int index = cbxCategory.getSelectionModel().getSelectedIndex();
+			String category = cbxCategory.getSelectionModel().getSelectedItem();
+			try {
+				if (index == 0) {
+					propogateList("");
+				}
+				else {
+					propogateList(", category_t\r\n" + 
+						"Where product_t.categoryID = category_t.categoryID\r\n" + 
+						"AND category_t.categoryName like '%"+ category +"';");
+				}
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

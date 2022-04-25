@@ -35,31 +35,43 @@ public class CustomerPage {
 	private Button btnRemove = new Button("Remove");
 	private Button btnDetails = new Button("Details");
 	private Button btnRefresh = new Button("Refresh");
-	private Label lblSearch = new Label("Search");
-	private TextField txtSearch = new TextField();
+	private Label lblSearch = new Label("Sort");
 	private ComboBox<String> cbxCategory = new ComboBox<String>();
-	private HBox hbxCatAndSearch = new HBox(25,cbxCategory,lblSearch,txtSearch);
+	private ComboBox<String> cbxFilters = new ComboBox<String>();
+	private HBox hbxCatAndSearch = new HBox(25,cbxCategory,lblSearch,cbxFilters);
 //	private VBox vbxProductList = new VBox(lstProducts);
 	private VBox vbxButtons = new VBox(20,btnAdd,btnRemove,btnDetails,btnRefresh);
 	private HBox hbxPrdctListAndBtns = new HBox(50,lstProducts,vbxButtons);
 	
 	public CustomerPage() throws SQLException{
+
 		openConnection();
-		propogateList();
+		propogateList(getPrem());
+
+		cbxCategory.getItems().add("All");
+		cbxCategory.getItems().add("Premium");
+		cbxCategory.getItems().add("Non-Premium");
+		cbxFilters.getItems().add("Name");
+		cbxFilters.getItems().add("ID");
+		cbxFilters.getSelectionModel().clearAndSelect(0);
+		propogateList(getPrem());
+
 		vbxButtons.setAlignment(Pos.CENTER);
 		vbxMain.getChildren().add(hbxCatAndSearch);
 		vbxMain.getChildren().add(hbxPrdctListAndBtns);
-		cbxCategory.getItems().add("Premium");
+		
 //		hbxPrdctListAndBtns.setAlignment(Pos.CENTER);
 //		hbxCatAndSearch.setAlignment(Pos.CENTER);
 		cbxCategory.getSelectionModel().select(0);	
+		
 		
 		initEventHandlers();
 		}
 	public VBox getNode() {
 		return vbxMain;
 	}
-	public void propogateList() throws SQLException {
+
+	public void propogateList(int i) throws SQLException {
 
 		String url = "jdbc:mysql://localhost/rainforest";
 		
@@ -78,19 +90,31 @@ public class CustomerPage {
 		openConnection();
 
 		clearList();
-		ResultSet result = statement.executeQuery("SELECT CustomerName FROM Customer_t;");
-		
+		if(i==3) {
+		ResultSet result = statement.executeQuery("SELECT CustomerName FROM Customer_t order by "+ getFilter()+";");
 		while (result.next()) {
 			lstProducts.getItems().add(result.getString("CustomerName"));
 		}
+
 		closeConnection();
 		
+
+		}
+		else {
+			ResultSet result = statement.executeQuery("SELECT CustomerName FROM Customer_t where Customer_t.customerPremium =" +i+ " order by "+ getFilter()+";");
+			while (result.next()) {
+				lstProducts.getItems().add(result.getString("CustomerName"));
+			}
+		}
+		connection.close();
+
 	}
 	public void clearList() {
 		if(!lstProducts.getItems().isEmpty()) {
 			lstProducts.getItems().clear();
 		}
 	}
+
 	public String getSelected() {
 		String strSelected  = lstProducts.getSelectionModel().getSelectedItem();
 		return strSelected;
@@ -112,6 +136,34 @@ public class CustomerPage {
 	}
 	public void closeConnection() throws SQLException {
 		connection.close();
+	}
+
+	public String getFilter() {
+		String filter;
+		if(cbxFilters.getSelectionModel().getSelectedIndex()==0) {
+			filter = "CustomerName";
+		}
+		else if (cbxFilters.getSelectionModel().getSelectedIndex()==1) {
+			filter="CustomerID";
+		}
+		else {
+			filter="customerID";
+		}
+		return filter;
+	}
+	public int getPrem() {
+		int prem=0;;
+		if(cbxCategory.getSelectionModel().getSelectedIndex()==0) {
+			prem=3;
+		}
+		else if(cbxCategory.getSelectionModel().getSelectedIndex()==1) {
+			prem=1;
+		}
+		else if(cbxCategory.getSelectionModel().getSelectedIndex()==2) {
+			prem=0;
+		}
+		return prem;
+
 	}
 	private void initEventHandlers() {
 		btnDetails.setOnAction(new DetailsBtnHandler());
@@ -163,7 +215,7 @@ public class CustomerPage {
 				e.printStackTrace();
 			}
 			try {
-				propogateList();
+				propogateList(getPrem());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -180,8 +232,9 @@ public class CustomerPage {
 	class RefreshBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
+			System.out.println(getFilter());
 			try {
-				propogateList();
+				propogateList(getPrem());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

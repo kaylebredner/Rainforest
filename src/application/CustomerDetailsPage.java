@@ -7,6 +7,8 @@ package application;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -19,6 +21,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import application.CustomerPage.AddBtnHandler;
+import application.CustomerPage.DetailsBtnHandler;
+import application.CustomerPage.RefreshBtnHandler;
+import application.CustomerPage.RemoveBtnHandler;
 //this is the least concrete and most changeable page imo. Feel free to throw ideas on discord if you think something is easier.
 public class CustomerDetailsPage {
 	//controls
@@ -40,6 +47,7 @@ public class CustomerDetailsPage {
 	private VBox vbxMain = new VBox(20,vbxPremium,hbxListButtons);
 	//other variables
 	private int selectedButton=2;
+	private String custName;
 	//sql
 	Connection connection = null;
 	Statement statement;
@@ -53,7 +61,7 @@ public class CustomerDetailsPage {
 		String username = "Rainforest";
 		
 		String password = "Rainforest123!";
-		
+		initEventHandlers();
 		try {
 			connection = DriverManager.getConnection(url,username,password);
 			System.out.println("connected");
@@ -78,8 +86,25 @@ public class CustomerDetailsPage {
 	public int getSelectedButton() {
 		return selectedButton;
 	}
+	private void initEventHandlers() {
+		btnOrders.setOnAction(new OrdersBtnHandler());
+		btnPayment.setOnAction(new PaymentBtnHandler());
+		btnShipping.setOnAction(new ShippingBtnHandler());
+		
+	}
+	public void propogateList(ResultSet set,String item) throws SQLException {
+		while (set.next()) {
+			lstSelected.getItems().add(set.getString(item));
+		}
+	}
+	public void clearList() {
+		if(!lstSelected.getItems().isEmpty()) {
+			lstSelected.getItems().clear();
+		}
+	}
 	public void getCustomerDetails(String name) throws SQLException {
 		statement = connection.createStatement();
+		custName = name;
 		ResultSet result = statement.executeQuery("SELECT * From Customer_t where CustomerName = '"+name+"';");
 		result.next();
 		getName().setText("Name: " + result.getString("CustomerName"));
@@ -91,6 +116,44 @@ public class CustomerDetailsPage {
 			cbxPremium.selectedProperty().set(false);
 		}
 		
+	}
+	class OrdersBtnHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			try {
+				ResultSet result = statement.executeQuery("select orderID from Order_T,customer_t where Order_t.CustomerID = customer_t.CustomerID and Customer_t.customerName = '"+custName +"';");
+				propogateList(result,"OrderID");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	class ShippingBtnHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			try {
+				ResultSet result = statement.executeQuery("select LocationName from shipmentlocation_t,order_t,customer_t where shipmentlocation_t.orderID = Order_t.orderID and Customer_t.CustomerID= Order_t.CustomerID and Customer_t.customerName = '"+custName+"';");
+				propogateList(result,"LocationName");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	class PaymentBtnHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event) {
+			try {
+				ResultSet result = statement.executeQuery("Select PaymentName from payment_t,customer_t where payment_t.customerID = customer_t.customerId and customer_t.CustomerName = '"+custName+"';");
+				propogateList(result,"PaymentName");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }

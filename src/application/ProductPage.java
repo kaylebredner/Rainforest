@@ -127,7 +127,18 @@ public class ProductPage {
 	class RemoveBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			try {
+				String url = "jdbc:mysql://localhost/rainforest";
+				String username = "Rainforest";
+				String password = "Rainforest123!";
+				connection = DriverManager.getConnection(url,username,password);
+				String selectedName = lstProducts.getSelectionModel().getSelectedItem();
+				statement = connection.createStatement();
+				statement.execute("DELETE FROM product_t Where product_t.productName = '"+selectedName+"';");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

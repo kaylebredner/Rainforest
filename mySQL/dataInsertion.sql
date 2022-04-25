@@ -107,12 +107,12 @@ insert into customer_t(CustomerName, LocationID, CustomerPremium /*has premium i
     ('Eva', '4837495710293745', '2025-10-04', 043),
     ('Shaan''s card', '5748573020248345', '2027-03-15', 483);
     
-    insert into order_t(CustomerID, PaymentID, EmployeeID, OrderStatus, OrderDate, OrderCost, TrackingNumber) values
-    (5, 1, 2, 'Processing', '2022-04-25', 906.55, 1234567),
-    (1, 2, 3, 'Shipped', '2022-03-14', 20.98, 5432957),
-    (9, 3, 1, 'Complete', '2022-01-25', 35.98, 1029483),
-    (23, 4, 1, 'Complete', '2021-11-03', 843.75, 5748392),
-    (13, 5, 1, 'Processing', '2022-04-26', 90.49, 2837456),
-    (22, 6, 4, 'Shipped', '2022-04-23', 65.92, 9557102),
-    (21, 7, 2, 'Processing', '2022-04-24', 70.82, 1047382);
+    insert into order_t(CustomerID, PaymentID, EmployeeID, ProductID, OrderStatus, OrderDate, OrderCost, TrackingNumber) values
+    (5, 1, 2, 10, 'Processing', '2022-04-25', 906.55, 1234567),
+    (1, 2, 3, 11, 'Shipped', '2022-03-14', 20.98, 5432957),
+    (9, 3, 1, 13, 'Complete', '2022-01-25', 35.98, 1029483),
+    (23, 4, 1, 19, 'Complete', '2021-11-03', 843.75, 5748392),
+    (13, 5, 1, 18, 'Processing', '2022-04-26', 90.49, 2837456),
+    (22, 6, 4, 17, 'Shipped', '2022-04-23', 65.92, 9557102),
+    (21, 7, 2, 4, 'Processing', '2022-04-24', 70.82, 1047382);
     

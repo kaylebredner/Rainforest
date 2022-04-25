@@ -63,22 +63,6 @@ CardCCV varchar(3) NOT NULL,
 PRIMARY KEY(PaymentID)
 );
 
-
-CREATE TABLE order_t
-(OrderID integer NOT NULL AUTO_INCREMENT,
-CustomerID integer NOT NULL,
-PaymentID integer NOT NULL,
-EmployeeID integer NOT NULL,
-ProductID integer NOT NULL,
-OrderStatus varchar(25) NOT NULL,
-OrderDate date NOT NULL,
-OrderCost integer NOT NULL,
-TrackingNumber integer NOT NULL,
-PRIMARY KEY(OrderID),
-FOREIGN KEY(CustomerID) REFERENCES customer_t(CustomerID),
-FOREIGN KEY(EmployeeID) REFERENCES employee_t(EmployeeID)
-);
-
 CREATE TABLE product_t
 (ProductID integer NOT NULL AUTO_INCREMENT,
 VendorID integer NOT NULL,
@@ -92,4 +76,20 @@ PRIMARY KEY(ProductID),
 FOREIGN KEY(VendorID) REFERENCES vendor_t(VendorID),
 FOREIGN KEY(InventoryID) REFERENCES inventory_t(InventoryID),
 FOREIGN KEY(CategoryID) REFERENCES category_t(CategoryID)
+);
+
+CREATE TABLE order_t
+(OrderID integer NOT NULL AUTO_INCREMENT,
+CustomerID integer NOT NULL,
+PaymentID integer NOT NULL,
+EmployeeID integer NOT NULL,
+ProductID integer,
+OrderStatus varchar(25) NOT NULL,
+OrderDate date NOT NULL,
+OrderCost integer NOT NULL,
+TrackingNumber integer NOT NULL,
+PRIMARY KEY(OrderID),
+FOREIGN KEY(CustomerID) REFERENCES customer_t(CustomerID),
+FOREIGN KEY(EmployeeID) REFERENCES employee_t(EmployeeID),
+FOREIGN KEY(ProductID) REFERENCES product_t(ProductID)
 );

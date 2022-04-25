@@ -87,7 +87,7 @@ public class AddProductPage {
 	class CancelBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-	
+		
 		}
 	}
 }

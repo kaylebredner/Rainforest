@@ -69,6 +69,7 @@ CREATE TABLE order_t
 CustomerID integer NOT NULL,
 PaymentID integer NOT NULL,
 EmployeeID integer NOT NULL,
+ProductID integer NOT NULL,
 OrderStatus varchar(25) NOT NULL,
 OrderDate date NOT NULL,
 OrderCost integer NOT NULL,

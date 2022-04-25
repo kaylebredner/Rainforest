@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 //and an edit button
 public class ProductDetailsPage {
 
-	private Button editBtn = new Button("Edit");
+	
 	private ImageView imageView = new ImageView();
 	private Label priceLbl = new Label("Price: ");
 	private Label nameLbl = new Label("Name: ");
@@ -64,7 +64,7 @@ public class ProductDetailsPage {
 		}
 		connection = DriverManager.getConnection(url,username,password);
 		System.out.println("connected");
-		mainVbox.getChildren().addAll(imageView,details,editBtn);
+		mainVbox.getChildren().addAll(imageView,details);
 		initDetails(productName);
 	}
 	
@@ -102,7 +102,7 @@ public class ProductDetailsPage {
 		result.next();
 		categoryLbl.setText("Category: " + result.getString("categoryName"));
 		
-		editBtn.setOnAction(new EditBtnHandler());
+		
 		
 		
 //		categoryLbl.setText("Category: "+result.getString("));

@@ -33,10 +33,9 @@ public class ProductPage {
 	private Button btnRemove = new Button("Remove");
 	private Button btnDetails = new Button("Details");
 	private Button btnRefresh = new Button("Refresh");
-	private Label lblSearch = new Label("Search");
-	private TextField txtSearch = new TextField();
+	
 	private ComboBox<String> cbxCategory = new ComboBox<String>();
-	private HBox hbxCatAndSearch = new HBox(25,cbxCategory,lblSearch,txtSearch);
+	private HBox hbxCatAndSearch = new HBox(25,cbxCategory);
 //	private VBox vbxProductList = new VBox(lstProducts);
 	private VBox vbxButtons = new VBox(20,btnAdd,btnRemove,btnDetails,btnRefresh);
 	private HBox hbxPrdctListAndBtns = new HBox(50,lstProducts,vbxButtons);

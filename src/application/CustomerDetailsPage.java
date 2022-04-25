@@ -48,6 +48,7 @@ public class CustomerDetailsPage {
 	//other variables
 	private int selectedButton=2;
 	private String custName;
+	private int customerID;
 	//sql
 	Connection connection = null;
 	Statement statement;
@@ -93,6 +94,7 @@ public class CustomerDetailsPage {
 		
 	}
 	public void propogateList(ResultSet set,String item) throws SQLException {
+		clearList();
 		while (set.next()) {
 			lstSelected.getItems().add(set.getString(item));
 		}
@@ -108,13 +110,20 @@ public class CustomerDetailsPage {
 		ResultSet result = statement.executeQuery("SELECT * From Customer_t where CustomerName = '"+name+"';");
 		result.next();
 		getName().setText("Name: " + result.getString("CustomerName"));
-		getAddress().setText("Address: " + result.getString("CustomerAddress"));
+		customerID = result.getInt("CustomerID");
+		System.out.println(customerID);
+		
 		if(result.getInt("CustomerPremium")==1) {
 			cbxPremium.selectedProperty().set(true);
 		}
 		else {
 			cbxPremium.selectedProperty().set(false);
 		}
+		ResultSet shipping = statement.executeQuery("SELECT shipmentLocation_t.LocationName, shipmentLocation_t.Address1, shipmentLocation_t.Address2, shipmentLocation_t.City, shipmentLocation_t.State, shipmentLocation_t.ZipCode "
+				+ "FROM shipmentLocation_t INNER JOIN customer_t "
+				+ "ON shipmentLocation_t.LocationID = customer_t.LocationID WHERE customer_t.customerID = " + customerID+";");
+		shipping.next();
+		getAddress().setText("Address: " + shipping.getString("Address1"));
 		
 	}
 	class OrdersBtnHandler implements EventHandler<ActionEvent>{
@@ -135,7 +144,10 @@ public class CustomerDetailsPage {
 		@Override
 		public void handle(ActionEvent event) {
 			try {
-				ResultSet result = statement.executeQuery("select LocationName from shipmentlocation_t,order_t,customer_t where shipmentlocation_t.orderID = Order_t.orderID and Customer_t.CustomerID= Order_t.CustomerID and Customer_t.customerName = '"+custName+"';");
+				ResultSet result = statement.executeQuery("SELECT shipmentLocation_t.LocationName, shipmentLocation_t.Address1, shipmentLocation_t.Address2, shipmentLocation_t.City, shipmentLocation_t.State, shipmentLocation_t.ZipCode\r\n" + 
+						"	FROM shipmentLocation_t INNER JOIN customer_t\r\n" + 
+						"		ON shipmentLocation_t.LocationID = customer_t.CustomerID\r\n" + 
+						"			WHERE customer_t.customerID = '"+customerID+"';");
 				propogateList(result,"LocationName");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -147,7 +159,7 @@ public class CustomerDetailsPage {
 		@Override
 		public void handle(ActionEvent event) {
 			try {
-				ResultSet result = statement.executeQuery("Select PaymentName from payment_t,customer_t where payment_t.customerID = customer_t.customerId and customer_t.CustomerName = '"+custName+"';");
+				ResultSet result = statement.executeQuery("select paymentName from paymentmethod_t,order_t,customer_t where paymentmethod_t.paymentID = order_t.paymentID and order_t.customerID = customer_t.customerID and customer_t.customerName = '"+custName+"';");
 				propogateList(result,"PaymentName");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

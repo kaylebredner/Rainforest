@@ -221,7 +221,7 @@ public class CustomerPage {
 				e1.printStackTrace();
 			}
 			try {
-				statement.executeQuery("delete from customer_t where customerName ="+getSelected());
+				statement.execute("DELETE FROM customer_t Where customer_t.customerName = '"+getSelected()+"';");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

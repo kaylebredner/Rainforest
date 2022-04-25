@@ -4,12 +4,24 @@ CREATE DATABASE rainforest;
 
 USE rainforest;
 
+CREATE TABLE shipmentLocation_t
+(LocationID integer	NOT NULL auto_increment,
+LocationName varchar(25) NOT NULL,
+Address1 varchar(25) NOT NULL,
+Address2 varchar(25),
+City varchar(20) NOT NULL,
+State varchar(20) NOT NULL,
+ZipCode varchar(5) NOT NULL,
+PRIMARY KEY(LocationID)
+);
+
 CREATE TABLE customer_t
 (CustomerID integer NOT NULL auto_increment,
+LocationID integer,
 CustomerName VarChar(50) NOT NULL,
-CustomerAddress varchar(50) NOT NULL,
 CustomerPremium boolean NOT NULL, /*0 is false, anything else is true*/
-PRIMARY KEY(customerID)
+PRIMARY KEY(CustomerID),
+FOREIGN KEY(LocationID) REFERENCES shipmentLocation_t(LocationID)
 );
 
 CREATE TABLE employee_t
@@ -20,7 +32,6 @@ EmployeeStartDate date NOT NULL,
 IsRetired Boolean NOT NULL, /*0 is default value (not retired), anything else indicates a retiree.*/
 PRIMARY KEY(EmployeeID)
 );
-ALTER TABLE employee_t auto_increment = 1;
 
 CREATE TABLE vendor_t
 (VendorID integer NOT NULL AUTO_INCREMENT,
@@ -40,26 +51,26 @@ PRIMARY KEY(CategoryID)
 CREATE TABLE inventory_t
 (InventoryID integer NOT NULL AUTO_INCREMENT,
 Quantity integer NOT NULL,
+Position char(3) NOT NULL,
 PRIMARY KEY(InventoryID)
 );
 
-CREATE TABLE payment_t
-(PaymentID integer NOT NULL,
-CustomerID integer NOT NULL,
+CREATE TABLE paymentMethod_t
+(PaymentID integer NOT NULL auto_increment,
 PaymentName varchar(20) NOT NULL,
 CardNumber varchar(16) NOT NULL,
 CardExpiration date NOT NULL,
 CardCCV varchar(3) NOT NULL,
-PRIMARY KEY(PaymentID),
-FOREIGN KEY(CustomerID) REFERENCES customer_t(CustomerID)
+PRIMARY KEY(PaymentID)
 );
-ALTER TABLE payment_t auto_increment = 1;
+
 
 CREATE TABLE order_t
 (OrderID integer NOT NULL AUTO_INCREMENT,
 CustomerID integer NOT NULL,
+PaymentID integer NOT NULL,
 EmployeeID integer NOT NULL,
-OrderStatus varchar(10) NOT NULL,
+OrderStatus varchar(25) NOT NULL,
 OrderDate date NOT NULL,
 OrderCost integer NOT NULL,
 TrackingNumber integer NOT NULL,
@@ -67,20 +78,6 @@ PRIMARY KEY(OrderID),
 FOREIGN KEY(CustomerID) REFERENCES customer_t(CustomerID),
 FOREIGN KEY(EmployeeID) REFERENCES employee_t(EmployeeID)
 );
-
-CREATE TABLE shipmentLocation_t
-(LocationID integer	NOT NULL,
-OrderID integer NOT NULL,
-LocationName varchar(25) NOT NULL,
-Address1 varchar(25) NOT NULL,
-Address2 varchar(25),
-City varchar(20) NOT NULL,
-State varchar(20) NOT NULL,
-ZipCode varchar(5) NOT NULL,
-PRIMARY KEY(LocationID),
-FOREIGN KEY(OrderID) REFERENCES order_t(OrderID)
-);
-ALTER TABLE shipmentLocation_t auto_increment = 1;
 
 CREATE TABLE product_t
 (ProductID integer NOT NULL AUTO_INCREMENT,
@@ -97,34 +94,62 @@ FOREIGN KEY(InventoryID) REFERENCES inventory_t(InventoryID),
 FOREIGN KEY(OrderID) REFERENCES order_t(OrderID),
 FOREIGN KEY(CategoryID) REFERENCES category_t(CategoryID)
 );
-ALTER TABLE product_t auto_increment = 1;
 
-insert into customer_t(CustomerName,CustomerAddress,CustomerPremium /*has premium if value is 1, if 0 does not*/) values
-	('Lester Domingo', '128 Ann Avenue, WV 26508', 0),
-    ('Sharmaine Helle', '3 Fairway Court, PA 18974', 1),
-    ('Sujata Mithra', '705 North Court Road, TX 78213', 0),
-    ('Yvette Embla', '798 Carriage Street, CA 90008', 0),
-    ('Eliza Yurena', '87 Lakewood Street, MI 48185', 0),
-    ('John Adams', '100 South Devon Street, PA 19468', 1),
-    ('Reese Bidziil', '4 Saxton Drive, MA 02184', 0),
-    ('Martin Uttara', '986 Tower Avenue, AZ 85351', 1),
-    ('Ignat Iddo', '699 S. Princeton Drive, IL 60099', 1),
-    ('Glinda Herman', '4 South Court, MI 48076', 0),
-    ('Aurora Emil', '60 Linden Street, FL 33470', 0),
-    ('Tiah Howarth', '3309 Vesta Drive, ND 58737', 1),
-    ('Asiya Graves', '3099 Eden Drive, VA 23069', 0),
-    ('Reegan Hackett', '4324 Armory Road, NC 28540', 0),
-    ('Tamia Dickens', '330 Mount Olive Road, GA 30030', 0),
-    ('Lilly Osborn', '2898 Wolf Pen Road, CA 94107', 1),
-    ('Sammy Parra', '4471 Eagle Street, IL, 62208', 0),
-    ('Bethany Bowden', '3951 Caynor Circle, NJ 07477', 0),
-    ('Frederic Herring', '2227 Virginia Street, IL 60607', 0),
-    ('Daniele Hubbard', '1352 Gateway Avenue, CA 93307', 1),
-    ('Shaan Daugherty', '2729 Dovetail Estates, OK 73951', 0),
-    ('Eva Patrick', '1151 Colony Street, CT 06103', 1),
-    ('Dawn Frame', '304 Trouser Leg Road, MO 65032', 0),
-    ('Ruby-May Orozco', '4244 Brooklyn Street, OR 97401', 0),
-    ('Tiya Howells', '3360 Melville Street, PA 18017', 0);
+use rainforest;
+
+insert into shipmentLocation_t(LocationName, Address1, Address2, City, State, ZipCode) values
+('Lester''s Home', '128 Ann Avenue', NULL, 'Charleston', 'WV', 26508),
+('Sharmaine''s Home', '3 Fairway Court', NULL, 'Pittsburgh', 'PA', 18974),
+('Sujata''s Home', '705 North Court Road', 'Apt 203', 'Dallas', 'TX', 78213),
+('Yvette''s Home', '798 Carriage Street', NULL, 'Los Santas', 'CA', 90008),
+('Eliza''s Home', '87 Lakewood Street', NULL, 'Lakeland', 'MI', 48185),
+('John''s Home', '100 South Devon Street', '101', 'Pittsburgh', 'PA', 19468),
+('Reese''s Home', '4 Saxton Drive', NULL, 'Mary', 'MA', 02184),
+('Martin''s Home', '986 Tower Avenue', '408A', 'Phoenix', 'AZ', 85351),
+('Ignat''s Home', '699 S. Princeton Drive', NULL, 'Greensburg', 'IL', 60099),
+('Glinda''s Home', '4 South Court', NULL, 'Mainland', 'MI', 48076),
+('Aurora''s Home', '60 Linden Street', '202B', 'Sudo', 'FL', 33470),
+('Tiah''s Home', '3309 Vesta Drive', NULL, 'Vesta', 'ND', 58737),
+('Asiya''s Home', '3099 Eden Drive', NULL, 'Fredricksonville', 'VA', 23069),
+('Reegan''s Home', '4324 Armory Road', NULL, 'Towneville', 'NC', 28540),
+('Tamia''s Home', '330 Mount Olive Road', NULL, 'Mexico', 'GA', 30030),
+('Lilly''s Home', '2898 Wolf Pen Road', NULL, 'Sacramento', 'CA', 94107),
+('Sammy''s Home', '4471 Eagle Street', NULL, 'Clevelands', 'IL', 62208),
+('Bethany''s Home', '3951 Caynor Circle', NULL, 'Southland', 'NJ', 07477),
+('Frederic''s Home', '2227 Virginia Street', NULL, 'Hethland', 'IL', 60607),
+('Daniele''s Home', '1352 Gateway Avenue', NULL, 'Sacrtamento', 'CA', 93307),
+('Shaan''s Home', '2729 Dovetail Estates', NULL, 'Topeka', 'OK', 73951),
+('Eva''s Home', '1151 Colony Street', NULL, 'Connect', 'CT', 06103),
+('Dawn''s Home', '304 Trouser Leg Road', NULL, 'Militatowne', 'MO', 65032),
+('Ruby-May''s Home', '4244 Brooklyn Street', NULL, 'Salem', 'OR', 97401),
+('Tiya''s Home', '3360 Melville Street', NULL, 'Lugarsville', 'PA', 18017);
+
+insert into customer_t(CustomerName, LocationID, CustomerPremium /*has premium if value is 1, if 0 does not*/) values
+	('Lester Domingo', 1, 0),
+    ('Sharmaine Helle', 2, 1),
+    ('Sujata Mithra', 3, 0),
+    ('Yvette Embla', 4, 0),
+    ('Eliza Yurena', 5, 0),
+    ('John Adams', 6, 1),
+    ('Reese Bidziil', 7, 0),
+    ('Martin Uttara', 8, 1),
+    ('Ignat Iddo', 9, 1),
+    ('Glinda Herman', 10, 0),
+    ('Aurora Emil', 11, 0),
+    ('Tiah Howarth', 12, 1),
+    ('Asiya Graves', 13, 0),
+    ('Reegan Hackett', 14, 0),
+    ('Tamia Dickens', 15, 0),
+    ('Lilly Osborn', 16, 1),
+    ('Sammy Parra', 17, 0),
+    ('Bethany Bowden', 18, 0),
+    ('Frederic Herring', 19, 0),
+    ('Daniele Hubbard', 20, 1),
+    ('Shaan Daugherty', 21, 0),
+    ('Eva Patrick', 22, 1),
+    ('Dawn Frame', 23, 0),
+    ('Ruby-May Orozco', 24, 0),
+    ('Tiya Howells', 25, 0);
     
     insert into employee_t(EmployeeName, EmployeeAddress, EmployeeStartDate, IsRetired/*0 is default value (not retired), 1 indicates a retiree.*/) values
     ('Kayleb Redner', '123 Wendy''s Lane', '2021-01-25', 0),
@@ -142,12 +167,12 @@ insert into customer_t(CustomerName,CustomerAddress,CustomerPremium /*has premiu
     ('Electronics', NULL),
     ('Home and Office', NULL);
     
-    insert into inventory_t(Quantity) values
-    (100),
-    (26),
-    (500),
-    (10000),
-    (3);
+    insert into inventory_t(Quantity, Position) values
+    (100, 'A7'),
+    (26, 'B14'),
+    (500, 'F16'),
+    (10000, 'J17'),
+    (3, 'M2');
     
     insert into product_t(VendorID, InventoryID, CategoryID, ProductName, ProductPrice, ProductWeight) values
 	(1, 2, 1, 'Anker 521 Portable Power Station 256Wh', 209.99, 10),
@@ -169,3 +194,9 @@ insert into customer_t(CustomerName,CustomerAddress,CustomerPremium /*has premiu
     (2, 4, 1, 'Apple iPhone 13 Pro - Alpine Green 128GB', 999.00, 3),
     (2, 4, 1, 'Apple iPhone 13 - Green 128GB', 829.00, 2.75),
     (2, 4, 1, 'Apple iPhone SE(2022) - Black 64GB', 429.00, 2.25);
+    
+    insert into paymentMethod_t(PaymentName, CardNumber, CardExpiration, CardCCV) values
+    ('Eliza''s Visa Credit', '0000111122223333', '2030-01-24', 113);
+    
+    insert into order_t(CustomerID, PaymentID, EmployeeID, OrderStatus, OrderDate, OrderCost, TrackingNumber) values
+    (5, 1, 2, 'Processing', '2022-04-25', 906.55, 1234567);

@@ -39,7 +39,6 @@ VendorName varchar(50) NOT NULL,
 VendorAddress varchar(50) NOT NULL,
 PRIMARY KEY(VendorID)
 );
-ALTER TABLE vendor_t auto_increment = 1;
 
 CREATE TABLE category_t
 (CategoryID integer NOT NULL AUTO_INCREMENT,
@@ -83,15 +82,14 @@ CREATE TABLE product_t
 (ProductID integer NOT NULL AUTO_INCREMENT,
 VendorID integer NOT NULL,
 InventoryID integer NOT NULL,
-OrderID integer,
 CategoryID integer NOT NULL,
 ProductName varchar(75) NOT NULL,
 ProductPrice decimal(13,2) NOT NULL,
 ProductWeight decimal(13,2) NOT NULL,
+ImageURL varchar(500),
 PRIMARY KEY(ProductID),
 FOREIGN KEY(VendorID) REFERENCES vendor_t(VendorID),
 FOREIGN KEY(InventoryID) REFERENCES inventory_t(InventoryID),
-FOREIGN KEY(OrderID) REFERENCES order_t(OrderID),
 FOREIGN KEY(CategoryID) REFERENCES category_t(CategoryID)
 );
 
@@ -174,26 +172,26 @@ insert into customer_t(CustomerName, LocationID, CustomerPremium /*has premium i
     (10000, 'J17'),
     (3, 'M2');
     
-    insert into product_t(VendorID, InventoryID, CategoryID, ProductName, ProductPrice, ProductWeight) values
-	(1, 2, 1, 'Anker 521 Portable Power Station 256Wh', 209.99, 10),
-    (1, 5, 1, 'Anker 535 Portable Power Station 512Wh', 599.99, 12),
-    (1, 3, 1, 'Anker Nano Pro USB-C Charging Block', 19.99, .75),
-    (1, 1, 1, 'Anker Magnetic MagGo Wireless Charger', 119.99, 2),
-    (1, 4, 1, 'Anker Nylon USB-C to Lightning Charging Cord (3.3 ft)', 209.99, 10),
-    (1, 3, 1, 'Anker 521 Portable Power Station 256Wh', 17.99, .50),
-    (1, 3, 1, 'Anker 521 Portable Power Station 256Wh', 209.99, 10),
-    (3, 1, 2, 'Rainforest Essentials Low-Back Mesh Office Chair', 74.81, 15),
-    (3, 3, 2, 'Rainforest Essentials 8-Sheet Micro-Cut Shredder', 65.97, 7.5),
-    (3, 4, 2, 'Rainforest Essentials Small Digital Alarm Clock', 13.80, 1.5),
-    (3, 3, 2, 'Rainforest Essentials 8-Sheet Micro-Cut Shredder', 65.97, 7.5),
-    (3, 4, 1, 'Rainforest Essentials Ergonomic Wireless Mouse', 10.21, 1.5),
-    (3, 4, 1, 'Rainforest Essentials High-Speed HDMI Cable (6 feet)', 8.28, .75),
-    (3, 3, 2, 'Rainforest Essentials Scissors - Pack of 3', 8.22, 1),
-    (3, 3, 2, 'Rainforest Essentials 1/3-Cut File Folders - Pack Of 100', 12.03, 1.5),
-    (3, 3, 2, 'Rainforest Essentials 12-Inch Laminator Machine', 34.22, 5),
-    (2, 4, 1, 'Apple iPhone 13 Pro - Alpine Green 128GB', 999.00, 3),
-    (2, 4, 1, 'Apple iPhone 13 - Green 128GB', 829.00, 2.75),
-    (2, 4, 1, 'Apple iPhone SE(2022) - Black 64GB', 429.00, 2.25);
+    insert into product_t(VendorID, InventoryID, CategoryID, ProductName, ProductPrice, ProductWeight, ImageURL) values
+	(1, 2, 1, 'Anker 521 Portable Power Station 256Wh', 209.99, 10, NULL),
+    (1, 5, 1, 'Anker 535 Portable Power Station 512Wh', 599.99, 12, NULL),
+    (1, 3, 1, 'Anker Nano Pro USB-C Charging Block', 19.99, .75, NULL),
+    (1, 1, 1, 'Anker Magnetic MagGo Wireless Charger', 119.99, 2, NULL),
+    (1, 4, 1, 'Anker Nylon USB-C to Lightning Charging Cord (3.3 ft)', 209.99, 10, NULL),
+    (1, 3, 1, 'Anker 521 Portable Power Station 256Wh', 17.99, .50, NULL),
+    (1, 3, 1, 'Anker 521 Portable Power Station 256Wh', 209.99, 10, NULL),
+    (3, 1, 2, 'Rainforest Essentials Low-Back Mesh Office Chair', 74.81, 15, NULL),
+    (3, 3, 2, 'Rainforest Essentials 8-Sheet Micro-Cut Shredder', 65.97, 7.5, NULL),
+    (3, 4, 2, 'Rainforest Essentials Small Digital Alarm Clock', 13.80, 1.5, 'https://alexb.tech/CS364/GroupProjectImages/alarmClock.png'),
+    (3, 3, 2, 'Rainforest Essentials 8-Sheet Micro-Cut Shredder', 65.97, 7.5, 'https://alexb.tech/CS364/GroupProjectImages/shredder.png'),
+    (3, 4, 1, 'Rainforest Essentials Ergonomic Wireless Mouse', 10.21, 1.5, NULL),
+    (3, 4, 1, 'Rainforest Essentials High-Speed HDMI Cable (6 feet)', 8.28, .75, 'https://alexb.tech/CS364/GroupProjectImages/hdmicable.png'),
+    (3, 3, 2, 'Rainforest Essentials Scissors - Pack of 3', 8.22, 1, NULL),
+    (3, 3, 2, 'Rainforest Essentials 1/3-Cut File Folders - Pack Of 100', 12.03, 1.5, NULL),
+    (3, 3, 2, 'Rainforest Essentials 12-Inch Laminator Machine', 34.22, 5, NULL),
+    (2, 4, 1, 'Apple iPhone 13 Pro - Alpine Green 128GB', 999.00, 3, 'https://alexb.tech/CS364/GroupProjectImages/Apple13ProAlpine.png'),
+    (2, 4, 1, 'Apple iPhone 13 - Green 128GB', 829.00, 2.75, 'https://alexb.tech/CS364/GroupProjectImages/Apple13Green.png'),
+    (2, 4, 1, 'Apple iPhone SE(2022) - Black 64GB', 429.00, 2.25, 'https://alexb.tech/CS364/GroupProjectImages/AppleSE.png');
     
     insert into paymentMethod_t(PaymentName, CardNumber, CardExpiration, CardCCV) values
     ('Eliza''s Visa Credit', '0000111122223333', '2030-01-24', 113);

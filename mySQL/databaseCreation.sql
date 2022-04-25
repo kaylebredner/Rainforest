@@ -39,7 +39,6 @@ VendorName varchar(50) NOT NULL,
 VendorAddress varchar(50) NOT NULL,
 PRIMARY KEY(VendorID)
 );
-ALTER TABLE vendor_t auto_increment = 1;
 
 CREATE TABLE category_t
 (CategoryID integer NOT NULL AUTO_INCREMENT,
@@ -83,14 +82,13 @@ CREATE TABLE product_t
 (ProductID integer NOT NULL AUTO_INCREMENT,
 VendorID integer NOT NULL,
 InventoryID integer NOT NULL,
-OrderID integer,
 CategoryID integer NOT NULL,
 ProductName varchar(75) NOT NULL,
 ProductPrice decimal(13,2) NOT NULL,
 ProductWeight decimal(13,2) NOT NULL,
+ImageURL varchar(500),
 PRIMARY KEY(ProductID),
 FOREIGN KEY(VendorID) REFERENCES vendor_t(VendorID),
 FOREIGN KEY(InventoryID) REFERENCES inventory_t(InventoryID),
-FOREIGN KEY(OrderID) REFERENCES order_t(OrderID),
 FOREIGN KEY(CategoryID) REFERENCES category_t(CategoryID)
 );

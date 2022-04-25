@@ -195,7 +195,19 @@ public class CustomerPage {
 	class AddBtnHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event) {
-			
+			AddCustomerPage addProductPage = null;
+			try {
+				addProductPage = new AddCustomerPage();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			VBox main = addProductPage.getNode();
+			Scene addProductScene = new Scene(main,450,700);
+			Stage addProductStage = new Stage();
+			addProductStage.setTitle("Add Customer");
+			addProductStage.setScene(addProductScene);
+			addProductStage.show();
 		}
 	}
 	

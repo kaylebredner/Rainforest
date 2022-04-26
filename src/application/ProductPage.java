@@ -1,5 +1,6 @@
 package application;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -91,7 +92,7 @@ public class ProductPage {
 			ProductDetailsPage productDetails = null;
 			try {
 				productDetails = new ProductDetailsPage(strSelected);
-			} catch (SQLException e) {
+			} catch (SQLException | FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

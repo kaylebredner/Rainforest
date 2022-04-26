@@ -34,14 +34,14 @@ public class ProductDetailsPage {
 	private Label categoryLbl = new Label("Category: ");
 	private Label weightLbl = new Label("Weight: ");
 	private Label quantityLbl = new Label("Quantity: ");
-	private Label positionLbl = new Label("Position: ");
+//	private Label positionLbl = new Label("Position: ");
 	
 //	private HBox nameAndPrice = new HBox(nameLbl, priceLbl);
 //	private HBox weightAndAmount = new HBox(weightLbl, amountLbl);
 //	private HBox catAndVendor = new HBox(categoryLbl, vendorLbl);
 //	private HBox location = new HBox(locationLbl);
 	
-	private VBox details = new VBox(nameLbl,priceLbl,categoryLbl,vendorLbl,weightLbl,quantityLbl,positionLbl);
+	private VBox details = new VBox(nameLbl,priceLbl,categoryLbl,vendorLbl,weightLbl,quantityLbl);
 	
 	//add all the hbox's to this
 	private VBox mainVbox = new VBox();
@@ -51,24 +51,24 @@ public class ProductDetailsPage {
 	Connection connection = null;
 	Statement statement;
 	
-	public ProductDetailsPage(String productName) throws SQLException {
+	public ProductDetailsPage(String productName) throws SQLException, FileNotFoundException {
 		String url = "jdbc:mysql://localhost/rainforest";
 		
 		String username = "Rainforest";
 		
 		String password = "Rainforest123!";
-		try {
-			imageView.setImage(new Image(new FileInputStream("default-product-image.png")));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			imageView.setImage(new Image(new FileInputStream("default-product-image.png")));
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
 		connection = DriverManager.getConnection(url,username,password);
 		System.out.println("connected");
 		mainVbox.getChildren().addAll(imageView,details);
 		initDetails(productName);
 	}
 	
-	private void initDetails(String productName) throws SQLException {
+	private void initDetails(String productName) throws SQLException, FileNotFoundException {
 		statement = connection.createStatement();
 		ResultSet result = statement.executeQuery("SELECT * From Product_t where ProductName = '"+productName+"';");
 		result.next();
@@ -77,6 +77,18 @@ public class ProductDetailsPage {
 		priceLbl.setText("Price: $" + price);
 		BigDecimal weight = result.getBigDecimal("ProductWeight");
 		weightLbl.setText("Weight: " + weight + " lbs");
+		String imageUrl = result.getString("ImageURL");
+		if (imageUrl != null) {
+			imageView.setImage(new Image(imageUrl));
+		}
+		else {
+			imageView.setImage(new Image(new FileInputStream("default-product-image.png")));
+		}
+		System.out.println(imageUrl);
+		imageView.setFitHeight(550);
+		imageView.setFitWidth(450);
+		imageView.setPreserveRatio(true);
+//		imageView.setImage(new Image(new FileInputStream(imageUrl)));
 		
 		//add position in select here once it's inserted into the DB
 		result = statement.executeQuery("select quantity\r\n" + 
@@ -102,7 +114,9 @@ public class ProductDetailsPage {
 		result.next();
 		categoryLbl.setText("Category: " + result.getString("categoryName"));
 		
-		
+//		result = statement.executeQuery("select imageURL\r\n" + 
+//				"from product_t\r\n" + 
+//				"where productName = '+"+productName+"';");
 		
 		
 //		categoryLbl.setText("Category: "+result.getString("));
@@ -110,14 +124,5 @@ public class ProductDetailsPage {
 	
 	public VBox getNode() {
 		return mainVbox;
-	}
-	
-	
-	
-	class EditBtnHandler implements EventHandler<ActionEvent>{
-		@Override
-		public void handle(ActionEvent event) {
-			
-		}
 	}
 }

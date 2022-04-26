@@ -34,14 +34,14 @@ public class ProductDetailsPage {
 	private Label categoryLbl = new Label("Category: ");
 	private Label weightLbl = new Label("Weight: ");
 	private Label quantityLbl = new Label("Quantity: ");
-	private Label positionLbl = new Label("Position: ");
+//	private Label positionLbl = new Label("Position: ");
 	
 //	private HBox nameAndPrice = new HBox(nameLbl, priceLbl);
 //	private HBox weightAndAmount = new HBox(weightLbl, amountLbl);
 //	private HBox catAndVendor = new HBox(categoryLbl, vendorLbl);
 //	private HBox location = new HBox(locationLbl);
 	
-	private VBox details = new VBox(nameLbl,priceLbl,categoryLbl,vendorLbl,weightLbl,quantityLbl,positionLbl);
+	private VBox details = new VBox(nameLbl,priceLbl,categoryLbl,vendorLbl,weightLbl,quantityLbl);
 	
 	//add all the hbox's to this
 	private VBox mainVbox = new VBox();
@@ -85,6 +85,9 @@ public class ProductDetailsPage {
 			imageView.setImage(new Image(new FileInputStream("default-product-image.png")));
 		}
 		System.out.println(imageUrl);
+		imageView.setFitHeight(550);
+		imageView.setFitWidth(450);
+		imageView.setPreserveRatio(true);
 //		imageView.setImage(new Image(new FileInputStream(imageUrl)));
 		
 		//add position in select here once it's inserted into the DB
@@ -121,14 +124,5 @@ public class ProductDetailsPage {
 	
 	public VBox getNode() {
 		return mainVbox;
-	}
-	
-	
-	
-	class EditBtnHandler implements EventHandler<ActionEvent>{
-		@Override
-		public void handle(ActionEvent event) {
-			
-		}
 	}
 }
